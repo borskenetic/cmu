@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Set PHP's default timezone to Asia/Manila
-        date_default_timezone_set(Config::get('app.timezone'));
+        date_default_timezone_set('Asia/Manila');
 
         // Optional: Set Carbon locale if you use translated dates
         Carbon::setLocale(Config::get('app.locale'));

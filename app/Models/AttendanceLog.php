@@ -12,4 +12,7 @@ class AttendanceLog extends Model
     {
         return $this->belongsTo(Student::class);
     }
+    protected $casts = [
+    'scanned_at' => 'datetime',
+    ];
 }

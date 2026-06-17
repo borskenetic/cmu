@@ -76,10 +76,16 @@
                                    value="{{ old('middle_initial', $student->middle_initial) }}" maxlength="5">
                         </div>
                         <div class="col-md-6">
-                            <label for="id_number" class="form-label">Student ID <span class="text-danger">*</span></label>
-                            <input type="text" name="id_number" id="id_number" class="form-control @error('id_number') is-invalid @enderror"
-                                   value="{{ old('id_number', $student->id_number) }}" required>
-                            @error('id_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label for="district_id" class="form-label">District ID <span class="text-danger">*</span></label>
+                            <input type="text" name="district_id" id="district_id" class="form-control @error('district_id') is-invalid @enderror"
+                                   value="{{ old('district_id', $student->district_id) }}" required>
+                            @error('district_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="barcode" class="form-label">Barcode</label>
+                            <input type="text" name="barcode" id="barcode" class="form-control @error('barcode') is-invalid @enderror"
+                                   value="{{ old('barcode', $student->barcode) }}" placeholder="Legacy ID barcode (optional)">
+                            @error('barcode')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
                             <label for="mobile_number" class="form-label">Mobile number</label>

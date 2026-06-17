@@ -59,7 +59,8 @@ class IdCardController extends Controller
 
 
         
-        $barcode = DNS1D::getBarcodePNG($student->qrcode, 'C128', 8, 300);
+        $barcodeValue = $student->barcode ?: $student->qrcode;
+        $barcode = DNS1D::getBarcodePNG($barcodeValue, 'C128', 8, 300);
         $barcodeImage = Image::make(base64_decode($barcode));
         
         $img->insert($barcodeImage, 'top-left', 1100, 1650);
@@ -80,8 +81,8 @@ class IdCardController extends Controller
         });
 
         // ID number
-        if ($student->id_number) {
-            $this->drawText($img, $student->id_number, 1000, 610, 65, '#000');
+        if ($student->district_id) {
+            $this->drawText($img, $student->district_id, 1000, 610, 65, '#000');
         }
         
         if ($student->qrcode) {

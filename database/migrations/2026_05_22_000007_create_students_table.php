@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('role_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('id_number')->nullable()->unique();
+            $table->string('district_id')->nullable()->unique();
+            $table->string('barcode')->nullable()->unique();
             $table->string('firstname');
             $table->string('lastname');
             $table->string('middle_initial')->nullable();

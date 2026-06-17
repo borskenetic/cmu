@@ -95,7 +95,7 @@
                             @endif
                         </td>
                         <td>
-                            {{ $log->scanned_at ? \Carbon\Carbon::parse($log->scanned_at, 'UTC')->timezone('Asia/Manila')->format('Y-m-d h:i A') : '—' }}
+                            {{ $log->scanned_at ? $log->scanned_at->format('Y-m-d h:i A') : '—' }}
                         </td>
                     </tr>
                 @empty

@@ -61,6 +61,8 @@
                 'pendingUrl' => route('pending.index', ['tab' => 'students']),
                 'importTemplateRoute' => 'students.import.template',
                 'importRoute' => 'students.import',
+                'barcodeTemplateRoute' => 'students.barcode-import.template',
+                'barcodeImportRoute' => 'students.barcode-import',
                 'exportRoute' => route('students.export', request()->query()),
                 'downloadIdsRoute' => route('students.bulk.ids', request()->query()),
             ])
@@ -70,7 +72,8 @@
                     <thead>
                         <tr>
                             <th scope="col">Profile</th>
-                            <th scope="col">Student ID</th>
+                            <th scope="col">District ID</th>
+                            <th scope="col">Barcode</th>
                             <th scope="col">Last Name</th>
                             <th scope="col">First Name</th>
                             <th scope="col">Course</th>
@@ -89,7 +92,8 @@
                                         <span>No Image</span>
                                     @endif
                                 </td>
-                                <td>{{ $student->id_number ?? '—' }}</td>
+                                <td>{{ $student->district_id ?? '—' }}</td>
+                                <td>{{ $student->barcode ?? '—' }}</td>
                                 <td>{{ $student->lastname }}</td>
                                 <td>{{ $student->firstname }}</td>
                                 <td>{{ $student->course }}</td>

@@ -27,7 +27,7 @@ class BulkIdCardService
 
         foreach ($students as $student) {
             $folder = $this->safePathSegment(
-                ($student->id_number ?? 'student').'_'.$student->lastname.'_'.$student->firstname
+                ($student->district_id ?? $student->barcode ?? 'student').'_'.$student->lastname.'_'.$student->firstname
             );
 
             try {

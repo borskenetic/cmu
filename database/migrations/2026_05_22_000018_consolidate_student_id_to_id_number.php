@@ -14,22 +14,24 @@ return new class extends Migration
                 continue;
             }
 
+            $schoolIdColumn = $this->ensureSchoolIdColumn($table);
+
             if (Schema::hasColumn($table, 'student_id')) {
                 DB::table($table)
                     ->whereNotNull('student_id')
-                    ->where(function ($q) {
-                        $q->whereNull('id_number')->orWhere('id_number', '');
+                    ->where(function ($q) use ($schoolIdColumn) {
+                        $q->whereNull($schoolIdColumn)->orWhere($schoolIdColumn, '');
                     })
                     ->orderBy('id')
-                    ->chunkById(100, function ($rows) use ($table) {
+                    ->chunkById(100, function ($rows) use ($table, $schoolIdColumn) {
                         foreach ($rows as $row) {
                             DB::table($table)->where('id', $row->id)->update([
-                                'id_number' => $row->student_id,
+                                $schoolIdColumn => $row->student_id,
                             ]);
                         }
                     });
 
-                Schema::table($table, function (Blueprint $blueprint) use ($table) {
+                Schema::table($table, function (Blueprint $blueprint) {
                     $blueprint->dropColumn('student_id');
                 });
             }
@@ -46,11 +48,15 @@ return new class extends Migration
 
     public function down(): void
     {
+        $schoolIdColumn = Schema::hasTable('students')
+            ? $this->resolveSchoolIdColumn('students')
+            : 'district_id';
+
         if (Schema::hasTable('students') && ! Schema::hasColumn('students', 'student_id')) {
             Schema::table('students', function (Blueprint $table) {
                 $table->string('student_id')->nullable()->after('role_id');
             });
-            DB::table('students')->update(['student_id' => DB::raw('id_number')]);
+            DB::table('students')->update(['student_id' => DB::raw($schoolIdColumn)]);
         }
 
         if (Schema::hasTable('pending_students') && ! Schema::hasColumn('pending_students', 'student_id')) {
@@ -58,8 +64,41 @@ return new class extends Migration
                 $table->string('student_id')->nullable()->after('id');
                 $table->string('qrcode')->nullable();
             });
-            DB::table('pending_students')->update(['student_id' => DB::raw('id_number')]);
+            DB::table('pending_students')->update(['student_id' => DB::raw($schoolIdColumn)]);
         }
+    }
+
+    private function ensureSchoolIdColumn(string $table): string
+    {
+        $column = $this->resolveSchoolIdColumn($table);
+        if ($column) {
+            return $column;
+        }
+
+        Schema::table($table, function (Blueprint $blueprint) use ($table) {
+            $after = $table === 'students' ? 'role_id' : 'id';
+
+            if ($table === 'students') {
+                $blueprint->string('district_id')->nullable()->unique()->after($after);
+            } else {
+                $blueprint->string('district_id')->nullable()->after($after);
+            }
+        });
+
+        return 'district_id';
+    }
+
+    private function resolveSchoolIdColumn(string $table): ?string
+    {
+        if (Schema::hasColumn($table, 'district_id')) {
+            return 'district_id';
+        }
+
+        if (Schema::hasColumn($table, 'id_number')) {
+            return 'id_number';
+        }
+
+        return null;
     }
 
     private function alignPendingStudentsColumns(): void
@@ -68,9 +107,11 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('pending_students', function (Blueprint $table) {
+        $schoolIdColumn = $this->ensureSchoolIdColumn('pending_students');
+
+        Schema::table('pending_students', function (Blueprint $table) use ($schoolIdColumn) {
             $columns = [
-                'id_number' => fn () => $table->string('id_number')->nullable()->after('id'),
+                $schoolIdColumn => fn () => $table->string($schoolIdColumn)->nullable()->after('id'),
                 'middle_initial' => fn () => $table->string('middle_initial')->nullable()->after('lastname'),
                 'birth_date' => fn () => $table->date('birth_date')->nullable(),
                 'blood_type' => fn () => $table->string('blood_type', 10)->nullable(),

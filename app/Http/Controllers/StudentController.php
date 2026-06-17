@@ -13,8 +13,10 @@ use App\Models\Program;
 use App\Models\StudentEditRequest;
 use App\Console\Commands\NormalizeStudentNames;
 use App\Exports\StudentsImportTemplateExport;
+use App\Exports\StudentBarcodesImportTemplateExport;
 use App\Exports\StudentsListExport;
 use App\Imports\StudentsImport;
+use App\Imports\StudentBarcodesImport;
 use App\Services\BulkIdCardService;
 use App\Support\TableColumns;
 use Illuminate\Support\Facades\Schema;
@@ -55,7 +57,8 @@ class StudentController extends Controller
                     ->orWhere('firstname', 'like', "%{$search}%")
                     ->orWhere('course', 'like', "%{$search}%")
                     ->orWhere('qrcode', 'like', "%{$search}%")
-                    ->orWhere('id_number', 'like', "%{$search}%");
+                    ->orWhere('district_id', 'like', "%{$search}%")
+                    ->orWhere('barcode', 'like', "%{$search}%");
             });
         }
 
@@ -80,6 +83,45 @@ class StudentController extends Controller
             new StudentsImportTemplateExport,
             'students_import_template.xlsx'
         );
+    }
+
+    public function downloadBarcodeImportTemplate()
+    {
+        return Excel::download(
+            new StudentBarcodesImportTemplateExport,
+            'student_barcodes_template.xlsx'
+        );
+    }
+
+    public function importBarcodes(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,xlsx,xls|max:10240',
+        ]);
+
+        $import = new StudentBarcodesImport;
+        Excel::import($import, $request->file('file'));
+
+        $message = "Barcode update complete: {$import->updated} updated";
+        if ($import->skipped > 0) {
+            $message .= ", {$import->skipped} skipped";
+        }
+        if ($import->notFound > 0) {
+            $message .= ", {$import->notFound} not matched";
+            $preview = array_slice($import->notFoundLabels, 0, 5);
+            if ($preview !== []) {
+                $message .= ' ('.implode(', ', $preview);
+                if (count($import->notFoundLabels) > 5) {
+                    $message .= ', …';
+                }
+                $message .= ')';
+            }
+        }
+        $message .= '.';
+
+        $flashKey = ($import->updated === 0 && $import->notFound > 0) ? 'error' : 'success';
+
+        return back()->with($flashKey, $message);
     }
 
     public function import(Request $request)
@@ -143,7 +185,8 @@ class StudentController extends Controller
     {
         // Validation
         $validated = $request->validate([
-            'id_number' => 'required|string|max:255|unique:students,id_number',
+            'district_id' => 'required|string|max:255|unique:students,district_id',
+            'barcode' => 'nullable|string|max:255|unique:students,barcode',
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:255',
@@ -226,7 +269,8 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
     
         $validated = $request->validate([
-            'id_number' => 'required|string|max:255|unique:students,id_number,' . $id,
+            'district_id' => 'required|string|max:255|unique:students,district_id,' . $id,
+            'barcode' => 'nullable|string|max:255|unique:students,barcode,' . $id,
             'lastname' => 'required|string|max:255',
             'firstname' => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:255',
@@ -346,7 +390,8 @@ class StudentController extends Controller
     private function buildStudentFromPending(PendingStudent $pending, string $qrcode): array
     {
         $data = [
-            'id_number' => $pending->id_number,
+            'district_id' => $pending->district_id,
+            'barcode' => $pending->barcode,
             'lastname' => $pending->lastname,
             'firstname' => $pending->firstname,
             'middle_initial' => $pending->middle_initial,
@@ -395,9 +440,14 @@ class StudentController extends Controller
 
                 $qrcode = 'S-' . str_pad((string) $nextNumber, 8, '0', STR_PAD_LEFT);
 
-                $idNumber = trim((string) ($pending->id_number ?? ''));
-                if ($idNumber !== '' && Student::where('id_number', $idNumber)->exists()) {
-                    throw new \Exception('Student ID number already exists in the students table.');
+                $districtId = trim((string) ($pending->district_id ?? ''));
+                if ($districtId !== '' && Student::where('district_id', $districtId)->exists()) {
+                    throw new \Exception('District ID already exists in the students table.');
+                }
+
+                $barcode = trim((string) ($pending->barcode ?? ''));
+                if ($barcode !== '' && Student::where('barcode', $barcode)->exists()) {
+                    throw new \Exception('Barcode already exists in the students table.');
                 }
 
                 $payload = $this->buildStudentFromPending($pending, $qrcode);

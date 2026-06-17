@@ -4,6 +4,8 @@
     'pendingUrl' => '#',
     'importTemplateRoute',
     'importRoute',
+    'barcodeTemplateRoute' => null,
+    'barcodeImportRoute' => null,
     'exportRoute',
     'downloadIdsRoute',
 ])
@@ -37,6 +39,21 @@
                             <button type="submit" class="btn btn-primary btn-sm">Import</button>
                         </div>
                     </form>
+                    @if($barcodeTemplateRoute && $barcodeImportRoute)
+                        <hr class="my-2">
+                        <p class="small text-muted mb-2 mb-0">Fill barcodes on existing students only.</p>
+                        <a href="{{ route($barcodeTemplateRoute) }}" class="btn btn-outline-secondary btn-sm w-100">Barcode Template</a>
+                        <form action="{{ route($barcodeImportRoute) }}" method="POST" enctype="multipart/form-data" class="patron-import-form w-100">
+                            @csrf
+                            <div class="patron-import-row">
+                                <label class="patron-import-file flex-grow-1">
+                                    <span class="btn btn-light btn-sm mb-0 w-100">Choose file</span>
+                                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required>
+                                </label>
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Update Barcodes</button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
             </div>
         </details>

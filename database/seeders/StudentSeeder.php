@@ -12,7 +12,8 @@ class StudentSeeder extends Seeder
     {
         $students = [
             [
-                'id_number' => '2024-00001',
+                'district_id' => '2024-00001',
+                'barcode' => null,
                 'firstname' => 'Juan',
                 'lastname' => 'Dela Cruz',
                 'middle_initial' => 'M',
@@ -23,7 +24,8 @@ class StudentSeeder extends Seeder
                 'qrcode' => 'S-00000001',
             ],
             [
-                'id_number' => '2024-00002',
+                'district_id' => '2024-00002',
+                'barcode' => null,
                 'firstname' => 'Maria',
                 'lastname' => 'Santos',
                 'middle_initial' => 'L',
@@ -34,7 +36,8 @@ class StudentSeeder extends Seeder
                 'qrcode' => 'S-00000002',
             ],
             [
-                'id_number' => '2024-00003',
+                'district_id' => '2024-00003',
+                'barcode' => null,
                 'firstname' => 'Jose',
                 'lastname' => 'Reyes',
                 'middle_initial' => null,
@@ -45,7 +48,8 @@ class StudentSeeder extends Seeder
                 'qrcode' => 'S-00000003',
             ],
             [
-                'id_number' => '2024-00004',
+                'district_id' => '2024-00004',
+                'barcode' => null,
                 'firstname' => 'Ana',
                 'lastname' => 'Garcia',
                 'middle_initial' => 'P',
@@ -56,7 +60,8 @@ class StudentSeeder extends Seeder
                 'qrcode' => 'S-00000004',
             ],
             [
-                'id_number' => '2024-00005',
+                'district_id' => '2024-00005',
+                'barcode' => 'LEGACY-00005',
                 'firstname' => 'Mark',
                 'lastname' => 'Lopez',
                 'middle_initial' => 'D',
@@ -73,10 +78,11 @@ class StudentSeeder extends Seeder
             $row['normalized_name'] = NormalizeStudentNames::normalizeFullName($fullName);
             $row['role_id'] = null;
 
-            Student::updateOrCreate(
-                ['id_number' => $row['id_number']],
-                $row
-            );
+            $matchKey = $row['district_id']
+                ? ['district_id' => $row['district_id']]
+                : ['barcode' => $row['barcode']];
+
+            Student::updateOrCreate($matchKey, $row);
         }
     }
 }

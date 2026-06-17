@@ -68,5 +68,8 @@ desktop.ini
 /videos/*.mp4
 /images/id_templates/
 
-# Do not commit migration archives
-/database/migrations/*.zip
+# Local archives and duplicate asset folders (use public/css, public/branding)
+/cmu.zip
+/css/
+/js/
+/branding/

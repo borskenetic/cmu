@@ -181,12 +181,12 @@ class AttendanceController extends Controller
     private function resolveStudent(string $raw): ?Student
     {
         $token = trim(str_replace("\r", '', $raw));
-        $student = Student::where('qrcode', $token)->first();
+        $student = $this->findStudentByScanToken($token);
 
         $parsed = $this->parseQr($raw);
 
         if (! $student && $parsed['student_no']) {
-            $student = Student::where('id_number', $parsed['student_no'])->first();
+            $student = $this->findStudentByScanToken($parsed['student_no']);
         }
 
         if (! $student && $parsed['full_name']) {
@@ -195,6 +195,20 @@ class AttendanceController extends Controller
         }
 
         return $student;
+    }
+
+    private function findStudentByScanToken(string $token): ?Student
+    {
+        if ($token === '') {
+            return null;
+        }
+
+        return Student::query()
+            ->where(function ($q) use ($token) {
+                $q->where('district_id', $token)
+                    ->orWhere('barcode', $token);
+            })
+            ->first();
     }
 
     private function parseQr(string $raw): array

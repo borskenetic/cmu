@@ -8,7 +8,8 @@ use Illuminate\Support\Str;
 class Student extends Model
 {
     protected $fillable = [
-        'id_number',
+        'district_id',
+        'barcode',
         'firstname',
         'lastname',
         'course',

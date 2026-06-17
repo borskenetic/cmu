@@ -66,10 +66,13 @@
                         <input type="text" name="lastname" class="form-control" placeholder="Last Name" required>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" name="id_number" class="form-control" placeholder="Student ID" value="{{ old('id_number') }}">
+                        <input type="text" name="district_id" class="form-control" placeholder="District ID" value="{{ old('district_id') }}">
                         <small class="text-danger" hidden>
-                            Please leave it blank if you dont know your Student ID. Dont input N/A
+                            Please leave it blank if you dont know your District ID. Dont input N/A
                         </small>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="barcode" class="form-control" placeholder="Barcode (legacy IDs)" value="{{ old('barcode') }}">
                     </div>
                     <div class="col-md-6">
                         <input type="date" name="birth_date" class="form-control" required>

@@ -22,9 +22,10 @@ Fresh schema for local / new installs — attendance, patrons, staff, and Larave
 | `000014` | `students.normalized_name` |
 | `000015` | `programs` (course dropdowns for patrons) |
 | `000016` | `program_years`, `program_courses` (prospectus manager) |
-| `000018` | Drops `student_id`, uses `id_number` as school ID; aligns `pending_students` |
+| `000018` | Drops `student_id`, uses `district_id` as school ID; aligns `pending_students` |
+| `000019` | Renames `id_number` → `district_id`, adds `barcode` on students / pending_students |
 
-**Student IDs:** `id_number` = school ID (e.g. `2024-00001`). `qrcode` = scan code (`S-00000001`). `attendance_logs.student_id` is the internal row FK to `students.id`.
+**Student IDs:** `district_id` = district ID (e.g. `2024-00001`). `barcode` = legacy ID barcode (older cards). `qrcode` = internal scan code (`S-00000001`). Attendance accepts either `district_id` or `barcode`. `attendance_logs.student_id` is the internal row FK to `students.id`.
 
 ## Retired migrations
 

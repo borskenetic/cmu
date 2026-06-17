@@ -2,7 +2,7 @@
 
 Laravel application for library **attendance scanning**, patron (student) records, employee records, ID cards, attendance logs, and admin tools.
 
-Repository: [github.com/borskenetic/attendance-system](https://github.com/borskenetic/attendance-system)
+Repository: [github.com/borskenetic/cmu](https://github.com/borskenetic/cmu)
 
 ## Requirements
 
@@ -15,8 +15,8 @@ Repository: [github.com/borskenetic/attendance-system](https://github.com/borske
 ## Quick start (new database)
 
 ```bash
-git clone https://github.com/borskenetic/attendance-system.git
-cd attendance-system
+git clone https://github.com/borskenetic/cmu.git
+cd cmu
 
 composer install
 cp .env.example .env
@@ -55,9 +55,21 @@ Default (change after first login): `admin@library.local` / `password`
 
 Or use **Admin → Create Account** after creating one user manually in tinker.
 
+## Student identifiers
+
+| Field | Purpose |
+|-------|---------|
+| `district_id` | District ID on newer cards (e.g. `23-3617`) |
+| `barcode` | Legacy patron barcode on older cards |
+| `qrcode` | Internal ID card code (`S-00000001`) |
+
+Attendance scanning accepts either **district ID** or **barcode**.
+
+Admins can bulk-fill barcodes on existing students via **Students → Import → Update Barcodes** (upload spreadsheet with `Barcode - Patron` and `District ID` columns).
+
 ## Migrations
 
-Active migrations live in `database/migrations/` as `2026_05_22_000001` … `000015`.
+Active migrations live in `database/migrations/` as `2026_05_22_000001` … `000019`.
 
 Older library/book migrations are kept in `database/migrations/_retired/` and are **not** run by Laravel (subfolder is ignored).
 
@@ -105,7 +117,8 @@ SMS_MODEM_API_KEY=your-secret-api-key
 - Never commit `.env`
 - Run `composer install --no-dev` on production
 - Set `APP_DEBUG=false`, `APP_ENV=production`
-- `php artisan config:cache` and `php artisan route:cache` after deploy
+- After deploy: `php artisan migrate --force`, then `php artisan config:cache` and `php artisan route:cache`
+- If routes change locally, run `php artisan route:clear` before caching again
 
 ## License
 

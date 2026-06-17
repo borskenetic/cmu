@@ -5,7 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class StudentsImportTemplateExport implements FromArray, WithHeadings
+class StudentBarcodesImportTemplateExport implements FromArray, WithHeadings
 {
     public function headings(): array
     {
@@ -14,7 +14,6 @@ class StudentsImportTemplateExport implements FromArray, WithHeadings
             'District ID',
             'Name - First',
             'Name - Last',
-            'Name - Middle',
         ];
     }
 
@@ -26,14 +25,12 @@ class StudentsImportTemplateExport implements FromArray, WithHeadings
                 '23-3617',
                 'Merry Fel',
                 'Beltran',
-                'Becero',
             ],
             [
                 '2020301121',
-                '',
+                '2020301121',
                 'Prince Kailer',
                 'Camanay',
-                'Caburnay',
             ],
         ];
     }
