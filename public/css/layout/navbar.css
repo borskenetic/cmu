@@ -219,9 +219,9 @@
                 background 0.15s, color 0.15s, border-color 0.15s;
 }
 .admin-sidebar-trigger:hover {
-    background: rgba(41, 171, 226, 0.08);
-    color: var(--brand-primary, #29abe2);
-    border-color: rgba(41, 171, 226, 0.3);
+    background: rgba(31, 122, 31, 0.08);
+    color: var(--brand-button-bg, #1f7a1f);
+    border-color: rgba(31, 122, 31, 0.3);
 }
 .admin-sidebar-trigger svg {
     width: 15px;
@@ -255,7 +255,7 @@
     display: flex;
     flex-direction: column;
     padding: 16px 10px 12px;
-    background: #0373e3;
+    background: var(--brand-button-bg, #1f7a1f);
     border-right: 1px solid rgba(17, 24, 39, 0.08);
     box-shadow: 4px 0 20px rgba(17, 24, 39, 0.05);
     color: #111827;
@@ -343,8 +343,8 @@
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 .admin-sidebar-brand:hover {
-    border-color: rgba(41, 171, 226, 0.35);
-    box-shadow: 0 2px 8px rgba(255, 221, 51, 0.12);
+    border-color: rgba(31, 122, 31, 0.35);
+    box-shadow: 0 2px 8px rgba(31, 122, 31, 0.12);
 }
 .admin-sidebar-brand-img {
     display: block;
@@ -359,7 +359,7 @@
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--brand-primary, #29abe2);
+    color: var(--brand-button-bg, #1f7a1f);
     text-align: center;
 }
 
@@ -455,7 +455,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--brand-primary, #29abe2), var(--brand-primary-dark, #1a8fc4));
+    background: linear-gradient(135deg, var(--brand-button-bg, #1f7a1f), var(--brand-nav-link-hover, #145214));
     color: #fff;
     font-weight: 700;
     font-size: 0.95rem;
