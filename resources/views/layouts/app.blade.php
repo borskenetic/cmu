@@ -9,14 +9,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset(config('branding.css_path', 'branding/branding.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/layout/navbar.css') }}">
+    @php
+        $usesAdminShell = auth()->check() && auth()->user()->can('isAdminOrStaff');
+        $navbarCssPath = public_path('css/layout/navbar.css');
+        $adminSidebarCssPath = public_path('css/layout/admin-sidebar.css');
+        $navbarCssVer = is_file($navbarCssPath) ? filemtime($navbarCssPath) : time();
+        $adminSidebarCssVer = is_file($adminSidebarCssPath) ? filemtime($adminSidebarCssPath) : time();
+    @endphp
+    <link rel="stylesheet" href="{{ asset('css/layout/navbar.css') }}?v={{ $navbarCssVer }}">
     <link rel="stylesheet" href="{{ asset('css/layout/app-fonts.css') }}">
+    @if($usesAdminShell)
+        <link rel="stylesheet" href="{{ asset('css/layout/admin-sidebar.css') }}?v={{ $adminSidebarCssVer }}">
+        {{-- Inline fallback: keeps sidebar usable even if public CSS deploy is missed/cached --}}
+        @if(is_file($adminSidebarCssPath))
+            <style id="admin-sidebar-css">{!! file_get_contents($adminSidebarCssPath) !!}</style>
+        @endif
+    @endif
     @stack('styles')
     @yield('styles')
     @stack('page-styles')
-    @php
-        $usesAdminShell = auth()->check() && auth()->user()->can('isAdminOrStaff');
-    @endphp
 </head>
 <body class="@yield('body_class') {{ $usesAdminShell ? 'admin-shell-body' : '' }}" style="background: var(--brand-page-bg, #f5f7fa);">
     @if($usesAdminShell)
@@ -30,7 +41,7 @@
         {{-- SidebarTrigger: desktop collapse/expand toggle --}}
         <div class="admin-sidebar-trigger-bar">
             <button class="admin-sidebar-trigger" id="sidebarCollapseBtn" type="button" aria-label="Toggle sidebar" title="Toggle sidebar">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2"/>
                     <path d="M9 3v18"/>
                 </svg>

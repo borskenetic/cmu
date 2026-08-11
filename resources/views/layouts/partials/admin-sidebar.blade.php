@@ -240,9 +240,9 @@
                     <button class="admin-sidebar-link admin-sidebar-link--parent {{ $open ? 'active' : '' }}"
                             type="button" aria-expanded="{{ $open ? 'true' : 'false' }}"
                             title="{{ $link['label'] }}">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon($link['icon']) !!}</svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon($link['icon']) !!}</svg>
                         <span>{{ $link['label'] }}</span>
-                        <svg class="admin-sidebar-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        <svg class="admin-sidebar-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
                     <div class="admin-sidebar-submenu">
                         @foreach($link['children'] as $child)
@@ -252,7 +252,7 @@
                                title="{{ $child['label'] }}"
                                @if(!empty($child['target'])) target="{{ $child['target'] }}" rel="noopener" @endif
                                @if($childActive) aria-current="page" @endif>
-                                <svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon($child['icon']) !!}</svg>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon($child['icon']) !!}</svg>
                                 <span>{{ $child['label'] }}</span>
                             </a>
                         @endforeach
@@ -264,9 +264,9 @@
                    title="{{ $link['label'] }}"
                    @if(!empty($link['target'])) target="{{ $link['target'] }}" rel="noopener" @endif
                    @if($linkActive) aria-current="page" @endif>
-                    <svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon($link['icon']) !!}</svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon($link['icon']) !!}</svg>
                     <span>{{ $link['label'] }}</span>
-                    <svg class="admin-sidebar-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                    <svg class="admin-sidebar-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                 </a>
             @endif
         @endforeach
@@ -279,9 +279,9 @@
                 <button class="admin-sidebar-link admin-sidebar-link--parent {{ $adminActive ? 'active' : '' }}"
                         type="button" aria-expanded="{{ $adminActive ? 'true' : 'false' }}"
                         title="Admin">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon('shield') !!}</svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon('shield') !!}</svg>
                     <span>Admin</span>
-                    <svg class="admin-sidebar-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    <svg class="admin-sidebar-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div class="admin-sidebar-submenu">
                     @foreach($adminChildren as $child)
@@ -290,7 +290,7 @@
                            class="admin-sidebar-link admin-sidebar-link--child {{ $childActive ? 'active' : '' }}"
                            title="{{ $child['label'] }}"
                            @if($childActive) aria-current="page" @endif>
-                            <svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon($child['icon']) !!}</svg>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $icon($child['icon']) !!}</svg>
                             <span>{{ $child['label'] }}</span>
                         </a>
                     @endforeach
@@ -304,7 +304,7 @@
             {{ strtoupper(substr($user->fname ?? $user->name ?? 'A', 0, 1)) }}
         </div>
         <button type="button" class="admin-sidebar-logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal" aria-label="Log out" title="Log out">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-4"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-4"/></svg>
             <span>Log out</span>
         </button>
     </div>
