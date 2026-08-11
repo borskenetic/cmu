@@ -14,17 +14,36 @@
     @stack('styles')
     @yield('styles')
     @stack('page-styles')
+    @php
+        $usesAdminShell = auth()->check() && auth()->user()->can('isAdminOrStaff');
+    @endphp
 </head>
-<body class="@yield('body_class')" style="background: var(--brand-page-bg, #f5f7fa);">
-    @include('layouts.partials.navbar')
-
-    @hasSection('banner')
-        <div class="pantas-banner">
-            @yield('banner')
-        </div>
+<body class="@yield('body_class') {{ $usesAdminShell ? 'admin-shell-body' : '' }}" style="background: var(--brand-page-bg, #f5f7fa);">
+    @if($usesAdminShell)
+        @include('layouts.partials.admin-sidebar')
+    @else
+        @include('layouts.partials.navbar')
     @endif
 
-    <main class="py-3">
+    <main class="{{ $usesAdminShell ? 'admin-main' : 'py-3' }}">
+        @if($usesAdminShell)
+        {{-- SidebarTrigger: desktop collapse/expand toggle --}}
+        <div class="admin-sidebar-trigger-bar">
+            <button class="admin-sidebar-trigger" id="sidebarCollapseBtn" type="button" aria-label="Toggle sidebar" title="Toggle sidebar">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M9 3v18"/>
+                </svg>
+            </button>
+        </div>
+        @endif
+
+        @hasSection('banner')
+            <div class="pantas-banner">
+                @yield('banner')
+            </div>
+        @endif
+
         <div class="container-fluid px-3 px-lg-4">
             @yield('content')
         </div>
