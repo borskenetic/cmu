@@ -10,6 +10,8 @@
 .pantas-header .header-logo-img {
     height: 32px;
     width: auto;
+    max-width: 200px;
+    object-fit: contain;
 }
 
 .pantas-header #routeWrapper {
@@ -347,7 +349,10 @@
 .admin-sidebar-brand-img {
     display: block;
     width: 100%;
+    max-width: 220px;
     height: auto;
+    max-height: 56px;
+    object-fit: contain;
 }
 .admin-sidebar-brand-role {
     font-size: 0.7rem;

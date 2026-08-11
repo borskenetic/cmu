@@ -215,9 +215,11 @@
         <img src="{{ asset('images/pantasLogo.png') }}"
              alt="{{ config('app.name') }}"
              class="admin-sidebar-brand-img"
-             width="3905" height="1056">
+             width="200" height="44"
+             style="max-width:100%;height:auto;display:block;">
         <span class="admin-sidebar-brand-seal" aria-hidden="true">
-            <img src="{{ asset('images/pantasLogo.png') }}" alt="" width="3905" height="1056">
+            <img src="{{ asset('images/pantasLogo.png') }}" alt="" width="40" height="40"
+                 style="height:100%;width:auto;max-width:none;">
         </span>
         <span class="admin-sidebar-brand-role">
             {{ ucfirst($user->role ?? 'Admin') }} Dashboard
