@@ -130,9 +130,19 @@ class StudentController extends Controller
             'file' => 'required|file|mimes:csv,xlsx,xls|max:10240',
         ]);
 
-        Excel::import(new StudentsImport, $request->file('file'));
+        // Library card exports can be large; avoid request timeout.
+        set_time_limit(0);
 
-        return back()->with('success', 'Students imported successfully.');
+        $import = new StudentsImport;
+        Excel::import($import, $request->file('file'));
+
+        $message = "Students import complete: {$import->created} created, {$import->updated} updated";
+        if ($import->skipped > 0) {
+            $message .= ", {$import->skipped} skipped";
+        }
+        $message .= '.';
+
+        return back()->with('success', $message);
     }
 
     public function bulkDownloadIds(Request $request, BulkIdCardService $bulkIds)

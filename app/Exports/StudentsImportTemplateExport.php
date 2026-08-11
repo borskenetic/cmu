@@ -9,11 +9,14 @@ class StudentsImportTemplateExport implements FromArray, WithHeadings
 {
     public function headings(): array
     {
+        // Matches library card export: CRWReportJob*.xlsx
         return [
             'Barcode - Patron',
+            'Course',
             'District ID',
             'Name - First',
             'Name - Last',
+            'Card Expires',
             'Name - Middle',
         ];
     }
@@ -22,17 +25,21 @@ class StudentsImportTemplateExport implements FromArray, WithHeadings
     {
         return [
             [
-                '2020301118',
-                '23-3617',
-                'Merry Fel',
-                'Beltran',
-                'Becero',
+                '00000000000100',
+                'BS Nursing',
+                '2016400290',
+                'Kristine Jane',
+                'Antonio',
+                '',
+                'Dela Cruz',
             ],
             [
                 '2020301121',
-                '',
+                'BS Information Technology',
+                '23-3617',
                 'Prince Kailer',
                 'Camanay',
+                '',
                 'Caburnay',
             ],
         ];
