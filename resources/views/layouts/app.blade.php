@@ -14,13 +14,11 @@
         $navbarCssPath = public_path('css/layout/navbar.css');
         $adminSidebarCssPath = public_path('css/layout/admin-sidebar.css');
         $navbarCssVer = is_file($navbarCssPath) ? filemtime($navbarCssPath) : time();
-        $adminSidebarCssVer = is_file($adminSidebarCssPath) ? filemtime($adminSidebarCssPath) : time();
     @endphp
     <link rel="stylesheet" href="{{ asset('css/layout/navbar.css') }}?v={{ $navbarCssVer }}">
     <link rel="stylesheet" href="{{ asset('css/layout/app-fonts.css') }}">
     @if($usesAdminShell)
-        <link rel="stylesheet" href="{{ asset('css/layout/admin-sidebar.css') }}?v={{ $adminSidebarCssVer }}">
-        {{-- Inline fallback: keeps sidebar usable even if public CSS deploy is missed/cached --}}
+        {{-- Inline only: avoids 404 when public/css/layout/admin-sidebar.css is missing on the web host --}}
         @if(is_file($adminSidebarCssPath))
             <style id="admin-sidebar-css">{!! file_get_contents($adminSidebarCssPath) !!}</style>
         @endif

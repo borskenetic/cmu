@@ -8,11 +8,37 @@
     <link rel="stylesheet" href="{{ asset('css/prospectus/index.css') }}">
     <style>
         body { display: block !important; height: auto !important; }
-        .school-setup-panel.hidden { display: none !important; }
-        .school-setup-panel {
-            height: auto !important;
-            overflow: visible !important;
+        .school-setup-panel { display: none; height: auto !important; overflow: visible !important; }
+        .school-setup-panel.is-open { display: block !important; }
+        .school-setup-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #1f2937;
+            color: #fff;
+            cursor: pointer;
+            user-select: none;
         }
+        .school-setup-header-title { font-weight: 600; flex: 1 1 auto; min-width: 12rem; }
+        .school-setup-header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .school-setup-header-actions button {
+            border: 0;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.875rem;
+            color: #fff;
+            cursor: pointer;
+        }
+        .school-setup-btn-expand { background: #4b5563; }
+        .school-setup-btn-edit { background: #eab308; }
+        .school-setup-btn-delete { background: #dc2626; }
         .school-setup-form {
             display: flex;
             flex-wrap: wrap;
@@ -20,22 +46,12 @@
             align-items: center;
         }
         .school-setup-form input[name="program_code"],
-        .school-setup-form input[name="course_code"] {
-            flex: 1 1 140px;
-        }
+        .school-setup-form input[name="course_code"] { flex: 1 1 140px; }
         .school-setup-form input[name="program_name"],
-        .school-setup-form input[name="course_name"] {
-            flex: 2 1 220px;
-        }
-        .school-setup-form input[name="total_years"] {
-            flex: 0 0 5.5rem;
-        }
-        .school-setup-form button[type="submit"] {
-            flex: 0 0 auto;
-            min-height: 2.5rem;
-        }
+        .school-setup-form input[name="course_name"] { flex: 2 1 220px; }
+        .school-setup-form input[name="total_years"] { flex: 0 0 5.5rem; }
+        .school-setup-form button[type="submit"] { flex: 0 0 auto; min-height: 2.5rem; }
         .school-setup-form input {
-            width: auto;
             border: 1px solid #cbd5e1 !important;
             background: #fff !important;
             color: #1f2937 !important;
@@ -44,7 +60,21 @@
         }
         .school-setup-add-course {
             border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            border-radius: 0;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
         }
+        .school-setup-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .school-setup-modal.is-open { display: flex !important; }
     </style>
 @endpush
 
@@ -80,30 +110,28 @@
 
         @forelse($colleges as $college)
         <div id="college-block-{{ $college->id }}" class="bg-white rounded shadow mb-6">
-            <div class="flex justify-between items-center px-4 py-3 bg-gray-800 text-white rounded-t">
-                <span id="college-name-{{ $college->id }}" class="font-semibold">
+            <div class="school-setup-header" onclick="toggleSchoolSetupPanel('#college-{{ $college->id }}')" role="button" tabindex="0">
+                <span id="college-name-{{ $college->id }}" class="school-setup-header-title">
                     {{ $college->name }}
                 </span>
-                <div class="flex gap-2">
-                    <button type="button"
-                        onclick="openCollegeEditModal({{ $college->id }}, @js($college->name))"
-                        class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">
+                <div class="school-setup-header-actions" onclick="event.stopPropagation()">
+                    <button type="button" class="school-setup-btn-expand"
+                        onclick="toggleSchoolSetupPanel('#college-{{ $college->id }}')">
+                        Expand / Collapse
+                    </button>
+                    <button type="button" class="school-setup-btn-edit"
+                        onclick="openCollegeEditModal({{ $college->id }}, @js($college->name))">
                         Edit College
                     </button>
-                    <button type="button"
-                        onclick="openCollegeDeleteModal({{ $college->id }}, @js($college->name))"
-                        class="bg-red-600 text-white px-2 py-1 rounded text-sm">
+                    <button type="button" class="school-setup-btn-delete"
+                        onclick="openCollegeDeleteModal({{ $college->id }}, @js($college->name))">
                         Delete
-                    </button>
-                    <button type="button" data-panel-toggle="#college-{{ $college->id }}"
-                        class="bg-gray-600 px-2 py-1 rounded text-sm text-white">
-                        Toggle
                     </button>
                 </div>
             </div>
 
-            <div id="college-{{ $college->id }}" class="p-4 hidden school-setup-panel">
-                <div class="school-setup-add-course bg-gray-50 rounded p-3 mb-4">
+            <div id="college-{{ $college->id }}" class="p-4 school-setup-panel">
+                <div class="school-setup-add-course">
                     <h3 class="font-semibold mb-3">Add Course</h3>
                     <form method="POST" action="{{ route('prospectus.storeProgram') }}"
                         class="school-setup-form">
@@ -129,14 +157,16 @@
 
         @if($unassignedPrograms->isNotEmpty())
         <div class="bg-white rounded shadow mb-6">
-            <div class="flex justify-between items-center px-4 py-3 bg-gray-500 text-white rounded-t">
-                <span class="font-semibold">Unassigned Courses</span>
-                <button type="button" data-panel-toggle="#unassigned-programs"
-                    class="bg-gray-600 px-2 py-1 rounded text-sm text-white">
-                    Toggle
-                </button>
+            <div class="school-setup-header" onclick="toggleSchoolSetupPanel('#unassigned-programs')" role="button" tabindex="0">
+                <span class="school-setup-header-title">Unassigned Courses</span>
+                <div class="school-setup-header-actions" onclick="event.stopPropagation()">
+                    <button type="button" class="school-setup-btn-expand"
+                        onclick="toggleSchoolSetupPanel('#unassigned-programs')">
+                        Expand / Collapse
+                    </button>
+                </div>
             </div>
-            <div id="unassigned-programs" class="p-4 hidden school-setup-panel">
+            <div id="unassigned-programs" class="p-4 school-setup-panel">
                 <p class="text-sm text-gray-600 mb-3">These courses are not under a college yet. Use Edit Course to assign one.</p>
                 @foreach($unassignedPrograms as $program)
                     @include('prospectus.partials.program_item', ['program' => $program])
@@ -146,7 +176,7 @@
         @endif
     </div>
 
-    <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="deleteModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Confirm Delete</h2>
             <p id="deleteMessage" class="mb-4 text-gray-700"></p>
@@ -167,7 +197,7 @@
         </div>
     </div>
 
-    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="editModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Edit Subject</h2>
             <form id="editForm" method="POST">
@@ -195,8 +225,7 @@
         </div>
     </div>
 
-    <div id="editProgramModal"
-        class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div id="editProgramModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Edit Course</h2>
             <form id="editProgramForm" method="POST">
@@ -226,7 +255,7 @@
         </div>
     </div>
 
-    <div id="deleteProgramModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div id="deleteProgramModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Delete Course</h2>
             <p class="mb-4">Are you sure you want to delete <span id="deleteProgramCode"></span>? This action cannot be undone.</p>
@@ -244,8 +273,7 @@
         </div>
     </div>
 
-    <div id="editCollegeModal"
-        class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div id="editCollegeModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Edit College</h2>
             <form id="editCollegeForm" method="POST">
@@ -267,7 +295,7 @@
         </div>
     </div>
 
-    <div id="deleteCollegeModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div id="deleteCollegeModal" class="school-setup-modal">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 class="text-lg font-bold mb-4">Delete College</h2>
             <p class="mb-4">Are you sure you want to delete <span id="deleteCollegeName" class="font-semibold"></span>?</p>
@@ -285,9 +313,92 @@
         </div>
     </div>
 
-    <div id="toastContainer" class="fixed bottom-5 right-5 space-y-2 z-50"></div>
+    <div id="toastContainer" class="fixed bottom-5 right-5 space-y-2" style="z-index:2100;"></div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/prospectus.js') }}?v={{ filemtime(public_path('js/prospectus.js')) }}"></script>
+<script>
+window.toggleSchoolSetupPanel = function (selector) {
+    var target = document.querySelector(selector);
+    if (!target) return;
+    target.classList.toggle('is-open');
+    target.classList.remove('hidden', 'collapsing', 'collapse', 'show');
+    target.style.height = '';
+    target.style.overflow = '';
+};
+
+window.openSchoolSetupModal = function (id) {
+    var modal = document.getElementById(id);
+    if (modal) modal.classList.add('is-open');
+};
+
+window.closeSchoolSetupModal = function (id) {
+    var modal = document.getElementById(id);
+    if (modal) modal.classList.remove('is-open');
+};
+
+window.openCollegeEditModal = function (collegeId, collegeName) {
+    var form = document.getElementById('editCollegeForm');
+    form.action = '/prospectus/college/' + collegeId;
+    document.getElementById('editCollegeName').value = collegeName;
+    window.openSchoolSetupModal('editCollegeModal');
+};
+window.closeCollegeEditModal = function () {
+    window.closeSchoolSetupModal('editCollegeModal');
+};
+window.openCollegeDeleteModal = function (collegeId, collegeName) {
+    var form = document.getElementById('deleteCollegeForm');
+    form.action = '/prospectus/college/' + collegeId;
+    document.getElementById('deleteCollegeName').textContent = collegeName;
+    window.openSchoolSetupModal('deleteCollegeModal');
+};
+window.closeCollegeDeleteModal = function () {
+    window.closeSchoolSetupModal('deleteCollegeModal');
+};
+
+window.openDeleteModal = function (courseId, courseCode) {
+    document.getElementById('deleteForm').action = '/prospectus/course/' + courseId;
+    document.getElementById('deleteMessage').innerText = 'Are you sure you want to delete course "' + courseCode + '"?';
+    window.openSchoolSetupModal('deleteModal');
+};
+window.closeDeleteModal = function () {
+    window.closeSchoolSetupModal('deleteModal');
+};
+window.openEditModal = function (courseId, code, name) {
+    document.getElementById('editForm').action = '/prospectus/course/' + courseId;
+    document.getElementById('editCourseCode').value = code;
+    document.getElementById('editCourseName').value = name;
+    window.openSchoolSetupModal('editModal');
+};
+window.closeEditModal = function () {
+    window.closeSchoolSetupModal('editModal');
+};
+window.openProgramEditModal = function (programId, collegeId, programCode, programName) {
+    document.getElementById('editProgramForm').action = '/prospectus/program/' + programId;
+    document.getElementById('editProgramCollege').value = collegeId || '';
+    document.getElementById('editProgramCode').value = programCode;
+    document.getElementById('editProgramName').value = programName;
+    window.openSchoolSetupModal('editProgramModal');
+};
+window.closeProgramEditModal = function () {
+    window.closeSchoolSetupModal('editProgramModal');
+};
+window.openProgramDeleteModal = function (programId, programCode) {
+    document.getElementById('deleteProgramForm').action = '/prospectus/program/' + programId;
+    document.getElementById('deleteProgramCode').textContent = programCode;
+    window.openSchoolSetupModal('deleteProgramModal');
+};
+window.closeProgramDeleteModal = function () {
+    window.closeSchoolSetupModal('deleteProgramModal');
+};
+
+(function () {
+    var openId = new URLSearchParams(window.location.search).get('open');
+    if (openId) {
+        var openEl = document.getElementById(openId);
+        if (openEl) openEl.classList.add('is-open');
+    }
+})();
+</script>
+<script src="{{ asset('js/prospectus.js') }}?v={{ filemtime(public_path('js/prospectus.js')) }}"></script>
 @endpush

@@ -1,109 +1,41 @@
-document.querySelectorAll("[data-panel-toggle]").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const selector = btn.getAttribute("data-panel-toggle");
-        const target = document.querySelector(selector);
-        if (!target) return;
-        target.classList.toggle("hidden");
-        // Clear any Bootstrap collapse leftovers that can freeze mid-animation
-        target.classList.remove("collapsing", "collapse", "show");
-        target.style.height = "";
-        target.style.overflow = "";
-    });
-});
-
-function openDeleteModal(courseId, courseCode) {
-    const form = document.getElementById('deleteForm');
-    form.action = `/prospectus/course/${courseId}`;
-    document.getElementById('deleteMessage').innerText =
-        `Are you sure you want to delete course "${courseCode}"?`;
-    document.getElementById('deleteModal').classList.remove('hidden');
-}
-
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
-
-function openEditModal(courseId, code, name) {
-    const form = document.getElementById('editForm');
-    form.action = `/prospectus/course/${courseId}`;
-    document.getElementById('editCourseCode').value = code;
-    document.getElementById('editCourseName').value = name;
-    document.getElementById('editModal').classList.remove('hidden');
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const openId = new URLSearchParams(window.location.search).get('open');
     if (openId) {
         const openEl = document.getElementById(openId);
-        if (openEl) {
-            openEl.classList.remove('hidden', 'collapsing', 'collapse');
-            openEl.classList.remove('show');
-            openEl.style.height = '';
-            openEl.style.overflow = '';
-        }
+        if (openEl) openEl.classList.add('is-open');
     }
 
     const editForm = document.getElementById('editForm');
     const deleteForm = document.getElementById('deleteForm');
 
-    // Helper: show spinner
     function toggleLoading(button, loading) {
+        if (!button) return;
         const spinner = button.querySelector('.spinner');
         const text = button.querySelector('.btn-text');
         if (loading) {
-            spinner.classList.remove('hidden');
-            text.classList.add('hidden');
+            if (spinner) spinner.classList.remove('hidden');
+            if (text) text.classList.add('hidden');
             button.disabled = true;
         } else {
-            spinner.classList.add('hidden');
-            text.classList.remove('hidden');
+            if (spinner) spinner.classList.add('hidden');
+            if (text) text.classList.remove('hidden');
             button.disabled = false;
         }
     }
 
-    // Helper: show success modal
     function showToast(message, type = "success") {
         const container = document.getElementById("toastContainer");
+        if (!container) return;
 
         const toast = document.createElement("div");
-        toast.className = `px-4 py-2 rounded-lg shadow-lg text-white flex items-center justify-between w-64 animate-slide-in`;
-        toast.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626"; // green or red
-        toast.innerHTML = `
-            <span>${message}</span>
-            <button class="ml-2 text-white font-bold focus:outline-none">×</button>
-        `;
-
-        // remove on click
+        toast.className = "px-4 py-2 rounded-lg shadow-lg text-white flex items-center justify-between w-64";
+        toast.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626";
+        toast.innerHTML = `<span>${message}</span><button type="button" class="ml-2 text-white font-bold">×</button>`;
         toast.querySelector("button").addEventListener("click", () => toast.remove());
-
-        // auto remove
-        setTimeout(() => {
-            toast.classList.remove("animate-slide-in");
-            toast.classList.add("animate-fade-out");
-            setTimeout(() => toast.remove(), 500);
-        }, 2000);
-
+        setTimeout(() => toast.remove(), 2500);
         container.appendChild(toast);
     }
 
-    // 🔹 Animations
-    const style = document.createElement("style");
-    style.innerHTML = `
-        @keyframes slideIn { from { transform: translateX(100%); opacity:0; } to { transform: translateX(0); opacity:1; } }
-        @keyframes fadeOut { from { opacity:1; } to { opacity:0; } }
-
-        .animate-slide-in { animation: slideIn 0.4s ease-out; }
-        .animate-fade-out { animation: fadeOut 0.5s forwards; }
-    `;
-    document.head.appendChild(style);
-
-
-    // ✅ Handle Edit (AJAX)
     if (editForm) {
         editForm.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -122,16 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 let updatedItem = await response.text();
                 let courseId = this.action.split('/').pop();
                 let li = document.getElementById('course-' + courseId);
-                li.outerHTML = updatedItem;
+                if (li) li.outerHTML = updatedItem;
                 closeEditModal();
-                showToast("Course Updated ✅");
+                showToast("Subject updated");
             } else {
-                alert('Error updating course');
+                showToast("Error updating subject", "error");
             }
         });
     }
 
-    // ✅ Handle Delete (AJAX)
     if (deleteForm) {
         deleteForm.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -151,9 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 let li = document.getElementById('course-' + courseId);
                 if (li) li.remove();
                 closeDeleteModal();
-                showToast("Course Deleted 🗑️");
+                showToast("Subject deleted");
             } else {
-                alert('Error deleting course');
+                showToast("Error deleting subject", "error");
             }
         });
     }
@@ -170,45 +101,28 @@ document.addEventListener("DOMContentLoaded", () => {
             let response = await fetch(this.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
 
             toggleLoading(btn, false);
 
             if (response.ok) {
                 let newItem = await response.text();
-                let ul = this.closest('#year-' + yearId).querySelector('ul');
-                let emptyMsg = ul.querySelector('.text-gray-500');
-                if (emptyMsg) emptyMsg.remove();
-                ul.insertAdjacentHTML('beforeend', newItem);
+                let yearPanel = document.getElementById('year-' + yearId);
+                let ul = yearPanel ? yearPanel.querySelector('ul') : null;
+                if (ul) {
+                    let emptyMsg = ul.querySelector('.text-gray-500');
+                    if (emptyMsg) emptyMsg.remove();
+                    ul.insertAdjacentHTML('beforeend', newItem);
+                }
                 this.reset();
-                showToast("Course Added ✅");
+                showToast("Subject added");
             } else {
-                alert('Error adding course');
+                showToast("Error adding subject", "error");
             }
         });
     });
 
-
-    // 🔹 Open Program Edit Modal
-    window.openProgramEditModal = function (programId, collegeId, programCode, programName) {
-        const modal = document.getElementById("editProgramModal");
-        const form = document.getElementById("editProgramForm");
-        form.action = `/prospectus/program/${programId}`;
-        document.getElementById("editProgramCollege").value = collegeId || '';
-        document.getElementById("editProgramCode").value = programCode;
-        document.getElementById("editProgramName").value = programName;
-        modal.classList.remove("hidden");
-    };
-
-    // 🔹 Close
-    window.closeProgramEditModal = function () {
-        document.getElementById("editProgramModal").classList.add("hidden");
-    };
-
-    // 🔹 Submit Handler
     const editProgramForm = document.getElementById("editProgramForm");
     if (editProgramForm) {
         editProgramForm.addEventListener("submit", async function (e) {
@@ -217,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
             toggleLoading(btn, true);
 
             let response = await fetch(this.action, {
-                method: 'POST', // Laravel spoofing still works
+                method: 'POST',
                 body: new FormData(this),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
@@ -230,9 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.reload();
                     return;
                 }
-                document.getElementById("program-name-" + data.id).textContent =
-                    `${data.program_code} — ${data.program_name}`;
-
+                const label = document.getElementById("program-name-" + data.id);
+                if (label) label.textContent = `${data.program_code} — ${data.program_name}`;
                 closeProgramEditModal();
                 showToast("Course updated");
             } else {
@@ -240,40 +153,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    // 🔹 Open Delete Modal
-    window.openProgramDeleteModal = function(programId, programCode) {
-        const modal = document.getElementById("deleteProgramModal");
-        const form = document.getElementById("deleteProgramForm");
-        form.action = `/prospectus/program/${programId}`;
-        document.getElementById("deleteProgramCode").textContent = programCode;
-        modal.classList.remove("hidden");
-    };
-    
-    // 🔹 Close
-    window.closeProgramDeleteModal = function() {
-        document.getElementById("deleteProgramModal").classList.add("hidden");
-    };
-    
-    // 🔹 Submit Handler
+
     const deleteProgramForm = document.getElementById("deleteProgramForm");
     if (deleteProgramForm) {
-        deleteProgramForm.addEventListener("submit", async function(e) {
+        deleteProgramForm.addEventListener("submit", async function (e) {
             e.preventDefault();
             const btn = document.getElementById("deleteProgramBtn");
             toggleLoading(btn, true);
-    
+
             let response = await fetch(this.action, {
-                method: 'POST', // Laravel method spoofing
+                method: 'POST',
                 body: new FormData(this),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
-    
+
             toggleLoading(btn, false);
-    
+
             if (response.ok) {
                 let data = await response.json();
-                document.getElementById("program-block-" + data.id)?.remove();
-    
+                const block = document.getElementById("program-block-" + data.id);
+                if (block) block.remove();
                 closeProgramDeleteModal();
                 showToast("Course deleted");
             } else {
@@ -281,18 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    window.openCollegeEditModal = function (collegeId, collegeName) {
-        const modal = document.getElementById("editCollegeModal");
-        const form = document.getElementById("editCollegeForm");
-        form.action = `/prospectus/college/${collegeId}`;
-        document.getElementById("editCollegeName").value = collegeName;
-        modal.classList.remove("hidden");
-    };
-
-    window.closeCollegeEditModal = function () {
-        document.getElementById("editCollegeModal").classList.add("hidden");
-    };
 
     const editCollegeForm = document.getElementById("editCollegeForm");
     if (editCollegeForm) {
@@ -321,18 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    window.openCollegeDeleteModal = function (collegeId, collegeName) {
-        const modal = document.getElementById("deleteCollegeModal");
-        const form = document.getElementById("deleteCollegeForm");
-        form.action = `/prospectus/college/${collegeId}`;
-        document.getElementById("deleteCollegeName").textContent = collegeName;
-        modal.classList.remove("hidden");
-    };
-
-    window.closeCollegeDeleteModal = function () {
-        document.getElementById("deleteCollegeModal").classList.add("hidden");
-    };
-
     const deleteCollegeForm = document.getElementById("deleteCollegeForm");
     if (deleteCollegeForm) {
         deleteCollegeForm.addEventListener("submit", async function (e) {
@@ -350,7 +225,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 let data = await response.json();
-                document.getElementById("college-block-" + data.id)?.remove();
+                const block = document.getElementById("college-block-" + data.id);
+                if (block) block.remove();
                 closeCollegeDeleteModal();
                 showToast("College deleted");
             } else {
