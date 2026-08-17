@@ -120,6 +120,9 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
 
     Route::prefix('prospectus')->name('prospectus.')->group(function () {
         Route::get('/', [ProspectusController::class, 'index'])->name('index');
+        Route::post('/store-college', [ProspectusController::class, 'storeCollege'])->name('storeCollege');
+        Route::put('/college/{college}', [ProspectusController::class, 'updateCollege'])->name('updateCollege');
+        Route::delete('/college/{college}', [ProspectusController::class, 'destroyCollege'])->name('destroyCollege');
         Route::post('/store-program', [ProspectusController::class, 'storeProgram'])->name('storeProgram');
         Route::get('/{program}/years', [ProspectusController::class, 'getProgramYears'])->name('getProgramYears');
     });

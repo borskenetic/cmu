@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AttendanceLog;
+use App\Models\College;
+use App\Models\Program;
 use App\Models\Setting;
 use App\Models\Student;
 use App\Services\PatronAttendanceReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AttendanceLogsExport;
 
@@ -19,16 +22,13 @@ class AttendanceLogController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // ✅ Get distinct courses for dropdown
-        $courses = Student::select('course')
-            ->whereNotNull('course')
-            ->distinct()
-            ->orderBy('course')
-            ->pluck('course');
+        $colleges = Schema::hasTable('colleges')
+            ? College::orderBy('name')->get()
+            : collect();
 
         $sections = Setting::attendanceSections();
 
-        return view('attendance_logs.index', compact('logs', 'courses', 'sections'));
+        return view('attendance_logs.index', compact('logs', 'colleges', 'sections'));
     }
 
     private function filteredLogs(Request $request)
@@ -49,7 +49,10 @@ class AttendanceLogController extends Controller
                     fn($q2) => $q2->where('year', $request->year_level)
                 ))
 
-            // ✅ NEW COURSE FILTER
+            ->when($request->college_id, function ($q) use ($request) {
+                $this->applyCollegeFilter($q, $request->college_id);
+            })
+
             ->when($request->course,
                 fn($q) => $q->whereHas('student',
                     fn($q2) => $q2->where('course', $request->course)
@@ -76,6 +79,28 @@ class AttendanceLogController extends Controller
             })
 
             ->orderBy('scanned_at', 'desc');
+    }
+
+    private function applyCollegeFilter($query, $collegeId)
+    {
+        if (! Schema::hasTable('programs')) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $programs = Program::where('college_id', $collegeId)->get(['program_code', 'program_name']);
+        $values = $programs->pluck('program_code')
+            ->merge($programs->pluck('program_name'))
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($values->isEmpty()) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        return $query->whereHas('student', function ($studentQuery) use ($values) {
+            $studentQuery->whereIn('course', $values);
+        });
     }
 
     public function create()

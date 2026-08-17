@@ -30,6 +30,12 @@ function closeEditModal() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const openId = new URLSearchParams(window.location.search).get('open');
+    if (openId) {
+        const openEl = document.getElementById(openId);
+        if (openEl) openEl.classList.remove('hidden');
+    }
+
     const editForm = document.getElementById('editForm');
     const deleteForm = document.getElementById('deleteForm');
 
@@ -175,10 +181,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 🔹 Open Program Edit Modal
-    window.openProgramEditModal = function (programId, programCode, programName) {
+    window.openProgramEditModal = function (programId, collegeId, programCode, programName) {
         const modal = document.getElementById("editProgramModal");
         const form = document.getElementById("editProgramForm");
         form.action = `/prospectus/program/${programId}`;
+        document.getElementById("editProgramCollege").value = collegeId || '';
         document.getElementById("editProgramCode").value = programCode;
         document.getElementById("editProgramName").value = programName;
         modal.classList.remove("hidden");
@@ -207,14 +214,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 let data = await response.json();
-                // Update the display text
+                if (data.college_changed) {
+                    window.location.reload();
+                    return;
+                }
                 document.getElementById("program-name-" + data.id).textContent =
                     `${data.program_code} — ${data.program_name}`;
 
                 closeProgramEditModal();
-                showToast("Program Updated 🎓");
+                showToast("Course updated");
             } else {
-                showToast("Error updating program ❌", "error");
+                showToast("Error updating course", "error");
             }
         });
     }
@@ -250,14 +260,94 @@ document.addEventListener("DOMContentLoaded", () => {
     
             if (response.ok) {
                 let data = await response.json();
-                // Remove the program card from DOM
-                const programDiv = document.getElementById("program-name-" + data.id)?.closest(".bg-white.rounded.shadow.mb-6");
-                if (programDiv) programDiv.remove();
+                document.getElementById("program-block-" + data.id)?.remove();
     
                 closeProgramDeleteModal();
-                showToast("Program deleted 🗑️");
+                showToast("Course deleted");
             } else {
-                showToast("Error deleting program ❌", "error");
+                showToast("Error deleting course", "error");
+            }
+        });
+    }
+
+    window.openCollegeEditModal = function (collegeId, collegeName) {
+        const modal = document.getElementById("editCollegeModal");
+        const form = document.getElementById("editCollegeForm");
+        form.action = `/prospectus/college/${collegeId}`;
+        document.getElementById("editCollegeName").value = collegeName;
+        modal.classList.remove("hidden");
+    };
+
+    window.closeCollegeEditModal = function () {
+        document.getElementById("editCollegeModal").classList.add("hidden");
+    };
+
+    const editCollegeForm = document.getElementById("editCollegeForm");
+    if (editCollegeForm) {
+        editCollegeForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById("editCollegeBtn");
+            toggleLoading(btn, true);
+
+            let response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            toggleLoading(btn, false);
+
+            if (response.ok) {
+                let data = await response.json();
+                const label = document.getElementById("college-name-" + data.id);
+                if (label) label.textContent = data.name;
+                closeCollegeEditModal();
+                showToast("College updated");
+            } else {
+                showToast("Error updating college", "error");
+            }
+        });
+    }
+
+    window.openCollegeDeleteModal = function (collegeId, collegeName) {
+        const modal = document.getElementById("deleteCollegeModal");
+        const form = document.getElementById("deleteCollegeForm");
+        form.action = `/prospectus/college/${collegeId}`;
+        document.getElementById("deleteCollegeName").textContent = collegeName;
+        modal.classList.remove("hidden");
+    };
+
+    window.closeCollegeDeleteModal = function () {
+        document.getElementById("deleteCollegeModal").classList.add("hidden");
+    };
+
+    const deleteCollegeForm = document.getElementById("deleteCollegeForm");
+    if (deleteCollegeForm) {
+        deleteCollegeForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById("deleteCollegeBtn");
+            toggleLoading(btn, true);
+
+            let response = await fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            toggleLoading(btn, false);
+
+            if (response.ok) {
+                let data = await response.json();
+                document.getElementById("college-block-" + data.id)?.remove();
+                closeCollegeDeleteModal();
+                showToast("College deleted");
+            } else {
+                let message = "Error deleting college";
+                try {
+                    const data = await response.json();
+                    if (data.message) message = data.message;
+                } catch (err) {}
+                showToast(message, "error");
             }
         });
     }

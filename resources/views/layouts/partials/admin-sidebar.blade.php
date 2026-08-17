@@ -113,7 +113,7 @@
 
     $adminChildren = [
         [
-            'label'    => 'Prospectus Manager',
+            'label'    => 'School Setup',
             'route'    => 'prospectus.index',
             'patterns' => ['prospectus.*'],
             'icon'     => 'grid',

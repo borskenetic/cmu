@@ -9,9 +9,13 @@ class Program extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['program_code', 'program_name', 'total_years'];
+    protected $fillable = ['college_id', 'program_code', 'program_name', 'total_years'];
 
-  
+    public function college()
+    {
+        return $this->belongsTo(College::class);
+    }
+
     public function years()
     {
         return $this->hasMany(ProgramYear::class);

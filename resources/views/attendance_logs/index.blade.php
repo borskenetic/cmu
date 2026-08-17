@@ -43,11 +43,11 @@
                 </select>
             </div>
             <div class="al-field">
-                <label>Course</label>
-                <select name="course">
-                    <option value="">All Courses</option>
-                    @foreach($courses as $course)
-                        <option value="{{ $course }}" {{ request('course') == $course ? 'selected' : '' }}>{{ $course }}</option>
+                <label>College of...</label>
+                <select name="college_id">
+                    <option value="">All Colleges</option>
+                    @foreach($colleges as $college)
+                        <option value="{{ $college->id }}" {{ (string) request('college_id') === (string) $college->id ? 'selected' : '' }}>{{ $college->name }}</option>
                     @endforeach
                 </select>
             </div>

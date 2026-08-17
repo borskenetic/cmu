@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <a href="{{ route('prospectus.index') }}" class="btn3 btn-sm">Prospectus Manager</a>
+            <a href="{{ route('prospectus.index') }}" class="btn3 btn-sm">School Setup</a>
 
             <div class="logs_dropdown">
                 <button class="logs_dropdown-button">Logs</button>
