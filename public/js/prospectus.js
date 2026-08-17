@@ -1,7 +1,14 @@
-document.querySelectorAll("[data-bs-toggle='collapse']").forEach(btn => {
-    btn.addEventListener("click", () => {
-        let target = document.querySelector(btn.dataset.bsTarget);
+document.querySelectorAll("[data-panel-toggle]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const selector = btn.getAttribute("data-panel-toggle");
+        const target = document.querySelector(selector);
+        if (!target) return;
         target.classList.toggle("hidden");
+        // Clear any Bootstrap collapse leftovers that can freeze mid-animation
+        target.classList.remove("collapsing", "collapse", "show");
+        target.style.height = "";
+        target.style.overflow = "";
     });
 });
 
@@ -33,7 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const openId = new URLSearchParams(window.location.search).get('open');
     if (openId) {
         const openEl = document.getElementById(openId);
-        if (openEl) openEl.classList.remove('hidden');
+        if (openEl) {
+            openEl.classList.remove('hidden', 'collapsing', 'collapse');
+            openEl.classList.remove('show');
+            openEl.style.height = '';
+            openEl.style.overflow = '';
+        }
     }
 
     const editForm = document.getElementById('editForm');

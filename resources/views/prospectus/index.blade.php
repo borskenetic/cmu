@@ -8,6 +8,43 @@
     <link rel="stylesheet" href="{{ asset('css/prospectus/index.css') }}">
     <style>
         body { display: block !important; height: auto !important; }
+        .school-setup-panel.hidden { display: none !important; }
+        .school-setup-panel {
+            height: auto !important;
+            overflow: visible !important;
+        }
+        .school-setup-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .school-setup-form input[name="program_code"],
+        .school-setup-form input[name="course_code"] {
+            flex: 1 1 140px;
+        }
+        .school-setup-form input[name="program_name"],
+        .school-setup-form input[name="course_name"] {
+            flex: 2 1 220px;
+        }
+        .school-setup-form input[name="total_years"] {
+            flex: 0 0 5.5rem;
+        }
+        .school-setup-form button[type="submit"] {
+            flex: 0 0 auto;
+            min-height: 2.5rem;
+        }
+        .school-setup-form input {
+            width: auto;
+            border: 1px solid #cbd5e1 !important;
+            background: #fff !important;
+            color: #1f2937 !important;
+            padding: 0.5rem 0.75rem;
+            min-height: 2.5rem;
+        }
+        .school-setup-add-course {
+            border: 1px solid #e5e7eb;
+        }
     </style>
 @endpush
 
@@ -58,28 +95,24 @@
                         class="bg-red-600 text-white px-2 py-1 rounded text-sm">
                         Delete
                     </button>
-                    <button data-bs-toggle="collapse" data-bs-target="#college-{{ $college->id }}"
-                        class="bg-gray-600 px-2 py-1 rounded text-sm">
+                    <button type="button" data-panel-toggle="#college-{{ $college->id }}"
+                        class="bg-gray-600 px-2 py-1 rounded text-sm text-white">
                         Toggle
                     </button>
                 </div>
             </div>
 
-            <div id="college-{{ $college->id }}" class="p-4 hidden">
-                <div class="bg-gray-50 rounded p-3 mb-4">
+            <div id="college-{{ $college->id }}" class="p-4 hidden school-setup-panel">
+                <div class="school-setup-add-course bg-gray-50 rounded p-3 mb-4">
                     <h3 class="font-semibold mb-3">Add Course</h3>
                     <form method="POST" action="{{ route('prospectus.storeProgram') }}"
-                        class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        class="school-setup-form">
                         @csrf
                         <input type="hidden" name="college_id" value="{{ $college->id }}">
-                        <input type="text" name="program_code" placeholder="Program Code" class="border px-3 py-2" required>
-                        <input type="text" name="program_name" placeholder="Course Name"
-                            class="border px-3 py-2 md:col-span-2" required>
-                        <div class="flex gap-2">
-                            <input type="number" name="total_years" placeholder="Years" min="1" max="6"
-                                class="border px-3 py-2 w-20" required>
-                            <button type="submit" class="btn btn-primary bg-blue-600 text-white px-4 py-2 rounded">Add</button>
-                        </div>
+                        <input type="text" name="program_code" placeholder="Program Code" required>
+                        <input type="text" name="program_name" placeholder="Course Name" required>
+                        <input type="number" name="total_years" placeholder="Years" min="1" max="6" required>
+                        <button type="submit" class="btn btn-primary bg-blue-600 text-white px-4 py-2">Add</button>
                     </form>
                 </div>
 
@@ -98,12 +131,12 @@
         <div class="bg-white rounded shadow mb-6">
             <div class="flex justify-between items-center px-4 py-3 bg-gray-500 text-white rounded-t">
                 <span class="font-semibold">Unassigned Courses</span>
-                <button data-bs-toggle="collapse" data-bs-target="#unassigned-programs"
-                    class="bg-gray-600 px-2 py-1 rounded text-sm">
+                <button type="button" data-panel-toggle="#unassigned-programs"
+                    class="bg-gray-600 px-2 py-1 rounded text-sm text-white">
                     Toggle
                 </button>
             </div>
-            <div id="unassigned-programs" class="p-4 hidden">
+            <div id="unassigned-programs" class="p-4 hidden school-setup-panel">
                 <p class="text-sm text-gray-600 mb-3">These courses are not under a college yet. Use Edit Course to assign one.</p>
                 @foreach($unassignedPrograms as $program)
                     @include('prospectus.partials.program_item', ['program' => $program])

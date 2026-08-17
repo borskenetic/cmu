@@ -14,25 +14,25 @@
                 class="bg-red-600 text-white px-2 py-1 rounded text-sm">
                 Delete
             </button>
-            <button data-bs-toggle="collapse" data-bs-target="#program-{{ $program->id }}"
-                class="bg-gray-600 px-2 py-1 rounded text-sm">
+            <button type="button" data-panel-toggle="#program-{{ $program->id }}"
+                class="bg-gray-600 px-2 py-1 rounded text-sm text-white">
                 Toggle
             </button>
         </div>
     </div>
 
-    <div id="program-{{ $program->id }}" class="p-4 hidden">
+    <div id="program-{{ $program->id }}" class="p-4 hidden school-setup-panel">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach($program->years as $year)
             <div class="bg-gray-50 rounded shadow">
                 <div class="flex justify-between items-center px-3 py-2 border-b">
                     <span class="font-semibold">Year {{ $year->year_level }}</span>
-                    <button data-bs-toggle="collapse" data-bs-target="#year-{{ $year->id }}"
+                    <button type="button" data-panel-toggle="#year-{{ $year->id }}"
                         class="text-sm text-gray-600">
                         Toggle
                     </button>
                 </div>
-                <div id="year-{{ $year->id }}" class="p-3 hidden">
+                <div id="year-{{ $year->id }}" class="p-3 hidden school-setup-panel">
                     <ul class="space-y-2 mb-3 max-h-52 overflow-y-auto">
                         @forelse($year->courses as $course)
                         <li id="course-{{ $course->id }}"
@@ -55,13 +55,11 @@
                     </ul>
 
                     <form method="POST" action="{{ route('prospectus.storeCourse', $year->id) }}"
-                        class="add-course-form grid grid-cols-1 md:grid-cols-3 gap-2"
+                        class="add-course-form school-setup-form"
                         data-year="{{ $year->id }}">
                         @csrf
-                        <input type="text" name="course_code" placeholder="Subject Code" class="border px-2 py-1"
-                            required>
-                        <input type="text" name="course_name" placeholder="Subject Name"
-                            class="border px-2 py-1 md:col-span-1" required>
+                        <input type="text" name="course_code" placeholder="Subject Code" required>
+                        <input type="text" name="course_name" placeholder="Subject Name" required>
                         <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">
                             <span class="btn-text">Add</span>
                             <span
