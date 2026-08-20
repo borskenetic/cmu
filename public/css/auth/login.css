@@ -1,34 +1,149 @@
-        .rounded-custom {
-            border-radius: 20px;
-            padding: 14px;
-            font-size: 18px;
-        }
+/* Login — uses public/branding/branding.css tokens */
 
-        .login-title {
-            font-size: 26px;
-            color: #932c27;
-        }
+body.login-page {
+    min-height: 100vh;
+    background: var(--brand-page-bg, #f5f7fa);
+    font-family: var(--brand-font-family, 'Inter', 'Segoe UI', system-ui, sans-serif);
+}
 
-        .login-subtitle {
-            font-size: 17px;
-        }
+.login-card {
+    max-width: 450px;
+    padding: 2.5rem 2.75rem 2.25rem;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(34, 51, 59, 0.1);
+    position: relative;
+}
 
-        @media (max-width: 576px) {
-            .login-title {
-                font-size: 22px;
-            }
+.login-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--brand-nav-link, #1f7a1f);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    transition: color 0.15s ease;
+}
 
-            .login-subtitle {
-                font-size: 15px;
-            }
+.login-back:hover {
+    color: var(--brand-nav-link-hover, #145214);
+}
 
-            .rounded-custom {
-                font-size: 16px;
-                padding: 12px;
-            }
+.login-back-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
 
-            .card {
-                padding: 2rem 1rem !important;
-            }
-        }
-        
+.login-logo {
+    max-width: 140px;
+    width: 100%;
+}
+
+.login-title {
+    font-size: 1.55rem;
+    color: var(--brand-card-header-bg, #22333b);
+    margin-bottom: 0.25rem;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.rounded-custom {
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    background-color: #f3f6f4;
+    border: 1.5px solid transparent;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.rounded-custom:focus {
+    background-color: #fff;
+    border-color: var(--brand-button-bg, #1f7a1f);
+    box-shadow: 0 0 0 0.2rem rgba(31, 122, 31, 0.2);
+}
+
+.login-card .form-check-input:checked {
+    background-color: var(--brand-button-bg, #1f7a1f);
+    border-color: var(--brand-button-bg, #1f7a1f);
+}
+
+.login-card .form-check-input:focus {
+    border-color: var(--brand-button-bg, #1f7a1f);
+    box-shadow: 0 0 0 0.2rem rgba(31, 122, 31, 0.2);
+}
+
+.login-card .form-check-label {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.login-forgot {
+    color: var(--brand-nav-link, #1f7a1f);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.login-forgot:hover {
+    color: var(--brand-nav-link-hover, #145214);
+    text-decoration: underline;
+}
+
+.btn-login {
+    background-color: var(--brand-button-bg, #1f7a1f);
+    border-color: var(--brand-button-bg, #1f7a1f);
+    color: var(--brand-button-text, #fff);
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.7rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-login:hover,
+.btn-login:focus {
+    background-color: var(--brand-button-hover-bg, #ffb845);
+    border-color: var(--brand-button-hover-bg, #ffb845);
+    color: var(--brand-button-hover-text, #22333b);
+}
+
+.btn-register {
+    background-color: transparent;
+    border: 1.5px solid var(--brand-button-bg, #1f7a1f);
+    color: var(--brand-button-bg, #1f7a1f);
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.7rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-register:hover,
+.btn-register:focus {
+    background-color: var(--brand-button-bg, #1f7a1f);
+    border-color: var(--brand-button-bg, #1f7a1f);
+    color: var(--brand-button-text, #fff);
+}
+
+@media (max-width: 576px) {
+    .login-title {
+        font-size: 1.3rem;
+    }
+
+    .login-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .rounded-custom {
+        font-size: 0.95rem;
+        padding: 0.7rem 0.9rem;
+    }
+
+    .login-card {
+        padding: 1.75rem 1.25rem !important;
+    }
+}
