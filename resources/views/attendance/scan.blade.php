@@ -33,14 +33,16 @@
 </head>
 <body>
 
-<header class="header">
-  <div class="header-left">
+<header class="header" style="display:flex; align-items:center; justify-content:space-between; padding:10px 40px;">
+  <div class="header-left" style="flex:0 0 auto;">
     <img src="{{ asset('images/pantasLogo.png') }}" alt="Logo">
   </div>
-  <div class="header-center">
+  <div class="header-center" style="flex:1 1 auto; text-align:center;">
     <div class="system-title">POWERED BY PANTAS</div>
   </div>
-  <div class="header-right" aria-hidden="true"></div>
+  <div class="header-right" style="flex:0 0 auto; visibility:hidden;">
+    <img src="{{ asset('images/pantasLogo.png') }}" alt="" style="height:4rem;">
+  </div>
 </header>
 
 <div class="main">
