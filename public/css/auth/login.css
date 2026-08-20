@@ -2,17 +2,24 @@
 
 body.login-page {
     min-height: 100vh;
+    margin: 0;
     background: var(--brand-page-bg, #f5f7fa);
     font-family: var(--brand-font-family, 'Inter', 'Segoe UI', system-ui, sans-serif);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 0;
+    box-sizing: border-box;
 }
 
 .login-card {
     max-width: 450px;
-    padding: 2.5rem 2.75rem 2.25rem;
-    border: none;
+    width: 100%;
+    padding: 2rem 2.5rem 2rem;
+    border: none !important;
     border-radius: 16px;
     box-shadow: 0 8px 28px rgba(34, 51, 59, 0.1);
-    position: relative;
+    background: #fff;
 }
 
 .login-back {
@@ -20,15 +27,15 @@ body.login-page {
     align-items: center;
     gap: 0.35rem;
     font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--brand-nav-link, #1f7a1f);
-    text-decoration: none;
+    font-weight: 600;
+    color: var(--brand-nav-link, #1f7a1f) !important;
+    text-decoration: none !important;
     margin-bottom: 0.75rem;
     transition: color 0.15s ease;
 }
 
 .login-back:hover {
-    color: var(--brand-nav-link-hover, #145214);
+    color: var(--brand-nav-link-hover, #145214) !important;
 }
 
 .login-back-icon {
@@ -37,32 +44,33 @@ body.login-page {
 }
 
 .login-logo {
-    max-width: 140px;
+    max-width: 120px;
     width: 100%;
+    height: auto;
 }
 
 .login-title {
-    font-size: 1.55rem;
-    color: var(--brand-card-header-bg, #22333b);
+    font-size: 1.45rem !important;
+    color: var(--brand-card-header-bg, #22333b) !important;
     margin-bottom: 0.25rem;
 }
 
 .login-subtitle {
-    font-size: 1rem;
-    color: #6c757d;
-    margin-bottom: 1.5rem;
+    font-size: 0.95rem !important;
+    color: #6c757d !important;
+    margin-bottom: 1.25rem;
 }
 
-.rounded-custom {
+.login-card .rounded-custom {
     border-radius: 12px;
-    padding: 0.8rem 1rem;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
     background-color: #f3f6f4;
     border: 1.5px solid transparent;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-.rounded-custom:focus {
+.login-card .rounded-custom:focus {
     background-color: #fff;
     border-color: var(--brand-button-bg, #1f7a1f);
     box-shadow: 0 0 0 0.2rem rgba(31, 122, 31, 0.2);
@@ -84,66 +92,64 @@ body.login-page {
 }
 
 .login-forgot {
-    color: var(--brand-nav-link, #1f7a1f);
-    text-decoration: none;
+    color: var(--brand-nav-link, #1f7a1f) !important;
+    text-decoration: none !important;
     font-size: 0.95rem;
     font-weight: 500;
 }
 
 .login-forgot:hover {
-    color: var(--brand-nav-link-hover, #145214);
-    text-decoration: underline;
+    color: var(--brand-nav-link-hover, #145214) !important;
+    text-decoration: underline !important;
 }
 
 .btn-login {
-    background-color: var(--brand-button-bg, #1f7a1f);
-    border-color: var(--brand-button-bg, #1f7a1f);
-    color: var(--brand-button-text, #fff);
+    background-color: var(--brand-button-bg, #1f7a1f) !important;
+    border-color: var(--brand-button-bg, #1f7a1f) !important;
+    color: var(--brand-button-text, #fff) !important;
     border-radius: 12px;
     font-weight: 600;
-    padding: 0.7rem 1rem;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    padding: 0.65rem 1rem;
 }
 
 .btn-login:hover,
 .btn-login:focus {
-    background-color: var(--brand-button-hover-bg, #ffb845);
-    border-color: var(--brand-button-hover-bg, #ffb845);
-    color: var(--brand-button-hover-text, #22333b);
+    background-color: var(--brand-button-hover-bg, #ffb845) !important;
+    border-color: var(--brand-button-hover-bg, #ffb845) !important;
+    color: var(--brand-button-hover-text, #22333b) !important;
 }
 
 .btn-register {
-    background-color: transparent;
-    border: 1.5px solid var(--brand-button-bg, #1f7a1f);
-    color: var(--brand-button-bg, #1f7a1f);
+    background-color: transparent !important;
+    border: 1.5px solid var(--brand-button-bg, #1f7a1f) !important;
+    color: var(--brand-button-bg, #1f7a1f) !important;
     border-radius: 12px;
     font-weight: 600;
-    padding: 0.7rem 1rem;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    padding: 0.65rem 1rem;
 }
 
 .btn-register:hover,
 .btn-register:focus {
-    background-color: var(--brand-button-bg, #1f7a1f);
-    border-color: var(--brand-button-bg, #1f7a1f);
-    color: var(--brand-button-text, #fff);
+    background-color: var(--brand-button-bg, #1f7a1f) !important;
+    border-color: var(--brand-button-bg, #1f7a1f) !important;
+    color: var(--brand-button-text, #fff) !important;
 }
 
 @media (max-width: 576px) {
+    body.login-page {
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
     .login-title {
-        font-size: 1.3rem;
+        font-size: 1.25rem !important;
     }
 
     .login-subtitle {
-        font-size: 0.95rem;
-    }
-
-    .rounded-custom {
-        font-size: 0.95rem;
-        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem !important;
     }
 
     .login-card {
-        padding: 1.75rem 1.25rem !important;
+        padding: 1.5rem 1.15rem !important;
     }
 }

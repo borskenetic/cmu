@@ -6,18 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset(config('branding.css_path', 'branding/branding.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}?v={{ @filemtime(public_path('css/auth/login.css')) }}">
 </head>
-<body class="login-page d-flex justify-content-center align-items-center">
+<body class="login-page">
 
-    <div class="card login-card w-100 mx-3">
+    <div class="card login-card mx-3">
         <a href="{{ route('home') }}" class="login-back">
             <span class="login-back-icon" aria-hidden="true">←</span>
             Back to Home
         </a>
 
         <div class="text-center">
-            <img src="{{ asset('images/d.png') }}" alt="Area 51 Logo" class="mb-3 login-logo">
+            <img src="{{ asset('images/d.png') }}" alt="Logo" class="mb-3 login-logo">
         </div>
 
         <h5 class="text-center fw-bold login-title">Welcome! Let’s Begin</h5>

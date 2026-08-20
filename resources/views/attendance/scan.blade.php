@@ -3,7 +3,8 @@
 <head>
   <title>{{ config('app.name') }} — Attendance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{{ asset('css/attendance/scan.css') }}">
+  <link rel="stylesheet" href="{{ asset(config('branding.css_path', 'branding/branding.css')) }}">
+  <link rel="stylesheet" href="{{ asset('css/attendance/scan.css') }}?v={{ @filemtime(public_path('css/attendance/scan.css')) }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     .marquee-container {
@@ -32,13 +33,14 @@
 </head>
 <body>
 
-<header>
-  <div class="header">
-    <div class="logo-title">
-      <img src="{{ asset('images/pantasLogo.png') }}" alt="Logo">
-      <div class="system-title">POWERED BY PANTAS</div>
-    </div>
+<header class="header">
+  <div class="header-left">
+    <img src="{{ asset('images/pantasLogo.png') }}" alt="Logo">
   </div>
+  <div class="header-center">
+    <div class="system-title">POWERED BY PANTAS</div>
+  </div>
+  <div class="header-right" aria-hidden="true"></div>
 </header>
 
 <div class="main">
